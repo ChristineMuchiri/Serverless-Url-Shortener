@@ -1,2 +1,2 @@
-# Severless-Url-Shortener
+# Serverless-Url-Shortener
 A serverless url-shortener
