@@ -5,20 +5,24 @@ function App() {
   const [url, setUrl] = useState('');
   const [short, setShort] = useState(null);
   const submit = async e => {
-    e.preventDefaut();
+    e.preventDefault();
     const r = await fetch(`${import.meta.env.VITE_API_URL}/links`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url })
     });
+    if (!r.ok) {
+      throw new Error(`Request failed with status ${r.status}`);
+    }
+
     const data = await r.json();
     setShort(data.short_url);
   };
 
   return (
     <div className='url-container'>
-      <form onSubmit={submit}>
-        
+      <form id='form-short'  onSubmit={submit}>
+
         <input
           className='input-form'
           value={url}

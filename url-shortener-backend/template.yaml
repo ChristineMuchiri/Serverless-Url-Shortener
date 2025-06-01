@@ -40,7 +40,7 @@ Resources:
           KeyType: HASH
   
   # functions
-  Create-Short-Link:
+  CreateLink:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: src/
@@ -51,6 +51,7 @@ Resources:
       Environment:
         Variables:
           TABLE_NAME: !Ref ShortLinksTable
+          BASE_URL: http://localhost:5173
       Events:
         HttpPost:
           Type: HttpApi # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
