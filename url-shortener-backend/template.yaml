@@ -30,6 +30,7 @@ Resources:
   ShortLinksTable:
     Type: AWS::DynamoDB::Table
     Properties:
+      TableName: ShortLinksTable
       BillingMode: "PAY_PER_REQUEST"
       AttributeDefinitions:
         - AttributeName: slug
@@ -39,19 +40,39 @@ Resources:
           KeyType: HASH
   
   # functions
-  HelloWorldFunction:
+  Create-Short-Link:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: hello_world/
-      Handler: app.lambda_handler
+      CodeUri: src/
+      Handler: create-link.lambda_handler
       Runtime: python3.12
       Architectures:
       - x86_64
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ShortLinksTable
       Events:
-        HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+        HttpPost:
+          Type: HttpApi # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /hello
-            Method: get
+            ApiId: !Ref ShortenerApi
+            Path: /links
+            Method: POST
+  RedirectLink:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: redirect.lambda_handler
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ShortLinksTable
+      Events:
+        HttpGet:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ShortenerApi
+            Path: /{slug}
+            Method: GET
+
 
   
